@@ -45,7 +45,15 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		initView();
+		openDiskLruCache();
 
+	}
+
+	/**
+	 * DiskLruCache标准的Open方法
+	 */
+	private void openDiskLruCache() {
 		// 标准的Open方法
 		try {
 			File cacheDir = getDiskCacheDir(this, "bitmap");
@@ -62,8 +70,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		initView();
 
 	}
 
@@ -74,9 +80,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		clearButton = (Button) findViewById(R.id.clearBtn);
 		clearButton.setOnClickListener(this);
 		imageView = (ImageView) findViewById(R.id.image);
-		textView = (TextView)findViewById(R.id.cacheText);
-		//显示缓存总字节数,以字节为单位
-		textView.setText(Long.toString(mDiskLruCache.size()/1024));
+		textView = (TextView) findViewById(R.id.cacheText);
+		// 显示缓存总字节数,以字节为单位
+		textView.setText(Long.toString(mDiskLruCache.size() / 1024));
 	}
 
 	/*
@@ -221,23 +227,23 @@ public class MainActivity extends Activity implements OnClickListener {
 			/*
 			 * 读取缓存
 			 */
-				try {
-					String key = hashKeyForDisk(imageUrl);
-					DiskLruCache.Snapshot snapShot = mDiskLruCache.get(key);
-					if (snapShot != null) {
-						Log.v("myu", "Image in Disk!!!");
-						InputStream is = snapShot.getInputStream(0);
-						Bitmap bitmap = BitmapFactory.decodeStream(is);
-						// 获取缓存的bitmap后，就可以更新UI了
-						imageView.setImageBitmap(bitmap);
-					} else {
-						Log.v("myu", "Image is Null!!!");
-						// 如果Disk中没有缓存对应的图片，则开启子线程下载图片并缓存到Disk
-						new Thread(new CacheWriteToDisk()).start();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+			try {
+				String key = hashKeyForDisk(imageUrl);
+				DiskLruCache.Snapshot snapShot = mDiskLruCache.get(key);
+				if (snapShot != null) {
+					Log.v("myu", "Image in Disk!!!");
+					InputStream is = snapShot.getInputStream(0);
+					Bitmap bitmap = BitmapFactory.decodeStream(is);
+					// 获取缓存的bitmap后，就可以更新UI了
+					imageView.setImageBitmap(bitmap);
+				} else {
+					Log.v("myu", "Image is Null!!!");
+					// 如果Disk中没有缓存对应的图片，则开启子线程下载图片并缓存到Disk
+					new Thread(new CacheWriteToDisk()).start();
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			break;
 		case R.id.clearBtn:
 			try {
