@@ -1,4 +1,6 @@
 # DiskLruCache
-这是一个DiskLruCache例子
+This is an example DiskLruCache
 
-分为DiskLruCache源码，已经常用方法的封装
+DiskLruCache is the second level cache for Android
+
+This Project Encapsulates the commonly used method.
